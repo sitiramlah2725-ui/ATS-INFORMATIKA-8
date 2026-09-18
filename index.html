@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATS Informatika Kelas 8 - Game Quiz Interaktif</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4A0E4E;
+      --accent-yellow: #FFD166;
+      --accent-pink: #FF6B6B;
+      --accent-green: #06D6A0;
+      --accent-blue: #118AB2;
+      --bg-color: #F7F9FC;
+      --card-bg: #FFFFFF;
+      --text-color: #2D3748;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-color);
+      padding: 15px;
+      user-select: none;
+    }
+
+    .container {
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 850px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      border: 4px solid #FFF;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Fredoka', sans-serif;
+      color: var(--primary);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* Form Start Screen */
+    .welcome-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .welcome-header h1 {
+      font-size: 2rem;
+      color: #FF6B6B;
+      margin-bottom: 5px;
+    }
+
+    .welcome-header p {
+      color: #718096;
+      font-weight: 500;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #4A5568;
+    }
+
+    input[type="text"], input[type="password"], select {
+      width: 100%;
+      padding: 12px 18px;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(17, 138, 178, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(45deg, #FF6B6B, #FFD166);
+      color: #FFF;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 15px rgba(255, 107, 107, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 20px rgba(255, 107, 107, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    /* Game Screen Header */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #EDF2F7;
+      padding: 12px 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+
+    .timer-box {
+      background: var(--accent-pink);
+      color: #FFF;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .foul-box {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #E53E3E;
+    }
+
+    /* Question Box */
+    .question-card {
+      background: #F8FAFC;
+      border: 2px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .question-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .img-placeholder {
+      width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      display: none;
+      background: #FFF;
+      border: 1px dashed #CBD5E0;
+    }
+
+    .options-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      padding: 12px 18px;
+      background: #FFF;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent-blue);
+      background: #EBF8FF;
+    }
+
+    .option-btn.selected {
+      border-color: var(--accent-blue);
+      background: #BEE3F8;
+      font-weight: 600;
+    }
+
+    .opt-label {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #EDF2F7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .opt-img {
+      max-height: 50px;
+      margin-left: 10px;
+      border-radius: 6px;
+    }
+
+    /* Navigation */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .btn-nav {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #E2E8F0;
+      color: #4A5568;
+      transition: 0.2s;
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      background: #CBD5E0;
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-submit {
+      background: var(--accent-green);
+      color: #FFF;
+    }
+
+    .btn-submit:hover {
+      background: #05B98A;
+    }
+
+    /* Card Warnings Overlay */
+    .card-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 999;
+      color: #FFF;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .card-graphic {
+      width: 120px;
+      height: 170px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .yellow-card { background: #FFD166; box-shadow: 0 0 30px #FFD166; }
+    .red-card { background: #FF6B6B; box-shadow: 0 0 30px #FF6B6B; }
+
+    @keyframes popIn {
+      0% { transform: scale(0) rotate(-20deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* Result Screen */
+    .result-box {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .score-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #06D6A0, #118AB2);
+      color: #FFF;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 20px auto;
+      box-shadow: 0 10px 20px rgba(6, 214, 160, 0.4);
+    }
+
+    .score-circle h2 {
+      color: #FFF;
+      font-size: 2.8rem;
+      line-height: 1;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .stat-card {
+      background: #F7FAFC;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #E2E8F0;
+    }
+
+    .stat-card span {
+      display: block;
+      font-size: 0.85rem;
+      color: #718096;
+    }
+
+    .stat-card strong {
+      font-size: 1.1rem;
+      color: #2D3748;
+    }
+
+    .error-tag {
+      display: inline-block;
+      background: #FED7D7;
+      color: #C53030;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin: 2px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- SCREEN 1: LOGIN / START -->
+    <div id="start-screen" class="screen active">
+      <div class="welcome-header">
+        <h1>Asesmen Tengah Semester</h1>
+        <p>Informatika Kelas 8 - SMP Dhammasoka</p>
+      </div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="student-name">Nama Lengkap</label>
+          <input type="text" id="student-name" placeholder="Masukkan nama siswa..." required>
+        </div>
+        <div class="form-group">
+          <label for="student-class">Kelas</label>
+          <select id="student-class" required>
+            <option value="">-- Pilih Kelas --</option>
+            <option value="VIII A">VIII A</option>
+            <option value="VIII B">VIII B</option>
+            <option value="VIII C">VIII C</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="passcode">Passcode Ujian</label>
+          <input type="password" id="passcode" placeholder="Masukkan passcode dari guru..." required>
+        </div>
+        <button type="submit" class="btn">Mulai Kerjakan 🚀</button>
+      </form>
+    </div>
+
+    <!-- SCREEN 2: QUIZ GAME -->
+    <div id="quiz-screen" class="screen">
+      <div class="quiz-header">
+        <div>
+          <strong id="display-user">Nama (Kelas)</strong>
+        </div>
+        <div class="timer-box" id="timer">90:00</div>
+        <div class="foul-box">Pelanggaran: <span id="foul-count">0</span>/2</div>
+      </div>
+
+      <div class="question-card">
+        <!-- Tempat Image URL Soal disisipkan -->
+        <img id="question-image" class="img-placeholder" src="" alt="Gambar Soal">
+        <div class="question-title" id="question-text">Teks soal akan muncul di sini...</div>
+        <div class="options-grid" id="options-container"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button id="btn-prev" class="btn-nav">← Sebelum</button>
+        <button id="btn-next" class="btn-nav">Selanjutnya →</button>
+        <button id="btn-submit" class="btn-nav btn-submit" style="display: none;">Kirim Jawaban 🏁</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: RESULT -->
+    <div id="result-screen" class="screen">
+      <div class="result-box">
+        <h2>Hasil Asesmen Anda</h2>
+        <p>Terima kasih telah menyelesaikan ujian dengan jujur.</p>
+
+        <div class="score-circle">
+          <span>Skor</span>
+          <h2 id="final-score">0</h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span>Jawaban Benar</span>
+            <strong id="correct-count">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>Jawaban Salah</span>
+            <strong id="wrong-count">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>Total Pelanggaran</span>
+            <strong id="final-fouls">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>Status</span>
+            <strong id="status-text">Selesai</strong>
+          </div>
+        </div>
+
+        <div class="stat-card" style="margin-bottom: 20px;">
+          <span>Nomor Soal Dijawab Salah:</span>
+          <div id="wrong-list" style="margin-top: 5px;">-</div>
+        </div>
+
+        <button onclick="location.reload()" class="btn">Kembali ke Hal Utama</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY KARTU PELANGGARAN -->
+  <div id="card-overlay" class="card-overlay">
+    <div id="card-graphic" class="card-graphic"></div>
+    <h2 id="card-title">Peringatan!</h2>
+    <p id="card-msg" style="margin-top: 10px; max-width: 400px;"></p>
+    <button id="btn-card-ack" class="btn" style="width: auto; margin-top: 20px; padding: 10px 30px;">Saya Mengerti</button>
+  </div>
+
+  <script>
+    // ==========================================
+    // INTEGRASI GOOGLE APPS SCRIPT (GAS)
+    // ==========================================
+    // Menyisipkan GAS URL yang sudah di-deploy:
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwsjIIkFUcprgD1IN8Q9e1C30kuXUBw0Lu2z-fyv8Sb3R_g7OW1W1udS6BekIFAAqbhsw/exec"; 
+    
+    // Passcode Rahasia Masuk Ujian (Jangan Tampilkan di Layar Utama)
+    const SECRET_PASSCODE = "INFORMATIKA8";
+
+    // ==========================================
+    // DATA SOAL (DISESUAIKAN DENGAN FILE ATS INFORMATIKA KELAS 8)
+    // Tempat menyisipkan Image URL:
+    // Gunakan properti `image: "URL_GAMBAR"` pada object soal atau pilihan jika ada.
+    // ==========================================
+    const questions = [
+      {
+        id: 1,
+        text: "Bilangan biner 101₂ jika dikonversikan ke dalam sistem bilangan desimal (basis 10) nilainya adalah...",
+        image: "", // Sisipkan URL gambar soal di sini jika ada
+        options: [
+          { text: "3", image: "" },
+          { text: "5", image: "" },
+          { text: "6", image: "" },
+          { text: "9", image: "" }
+        ],
+        answer: 1 // Pilihan B (Index 1)
+      },
+      {
+        id: 2,
+        text: "Sistem komputer menggunakan kode biner 111₂ untuk merepresentasikan suatu data angka. Nilai desimal dari bilangan biner tersebut adalah...",
+        image: "",
+        options: [
+          { text: "7", image: "" },
+          { text: "8", image: "" },
+          { text: "14", image: "" },
+          { text: "15", image: "" }
+        ],
+        answer: 0
+      },
+      {
+        id: 3,
+        text: "Hasil konversi bilangan biner 1010₂ ke bentuk desimal yang benar adalah...",
+        image: "",
+        options: [
+          { text: "8", image: "" },
+          { text: "10", image: "" },
+          { text: "12", image: "" },
+          { text: "14", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 4,
+        text: "Sebuah data digital tersimpan dalam bentuk biner 11001₂. Jika diubah menjadi angka desimal, nilainya sama dengan...",
+        image: "",
+        options: [
+          { text: "19", image: "" },
+          { text: "23", image: "" },
+          { text: "25", image: "" },
+          { text: "27", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 5,
+        text: "Nilai desimal dari bilangan biner 10110₂ adalah...",
+        image: "",
+        options: [
+          { text: "18", image: "" },
+          { text: "22", image: "" },
+          { text: "26", image: "" },
+          { text: "30", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 6,
+        text: "Angka desimal 9₁₀ jika diubah ke dalam bentuk bilangan biner adalah...",
+        image: "",
+        options: [
+          { text: "1001₂", image: "" },
+          { text: "1010₂", image: "" },
+          { text: "1100₂", image: "" },
+          { text: "1110₂", image: "" }
+        ],
+        answer: 0
+      },
+      {
+        id: 7,
+        text: "Nilai biner dari bilangan desimal 13₁₀ adalah...",
+        image: "",
+        options: [
+          { text: "1011₂", image: "" },
+          { text: "1101₂", image: "" },
+          { text: "1110₂", image: "" },
+          { text: "1111₂", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 8,
+        text: "Bilangan desimal 20₁₀ jika dikonversikan ke basis 2 (biner) menghasilkan nilai...",
+        image: "",
+        options: [
+          { text: "10010₂", image: "" },
+          { text: "10100₂", image: "" },
+          { text: "10110₂", image: "" },
+          { text: "11000₂", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 9,
+        text: "Suatu data angka memiliki nilai desimal 35₁₀. Penulisan kode biner yang tepat untuk angka tersebut adalah...",
+        image: "",
+        options: [
+          { text: "100011₂", image: "" },
+          { text: "100101₂", image: "" },
+          { text: "101001₂", image: "" },
+          { text: "110001₂", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 10,
+        text: "Seorang siswa ingin mengubah nilai desimal 50₁₀ ke bentuk biner. Hasil konversi yang benar adalah...",
+        image: "",
+        options: [
+          { text: "110000₂", image: "" },
+          { text: "110010₂", image: "" },
+          { text: "110100₂", image: "" },
+          { text: "111000₂", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 11,
+        text: "Fungsi VLOOKUP digunakan untuk mencari data berdasarkan kata kunci tertentu. Huruf 'V' dalam nama fungsi VLOOKUP merupakan singkatan dari...",
+        image: "", 
+        options: [
+          { text: "Variable", image: "" },
+          { text: "Vertical", image: "" },
+          { text: "Value", image: "" },
+          { text: "Vector", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 12,
+        text: "Berdasarkan Gambar 1, posisi kolom 'Nilai' berada pada kolom ke berapa dalam rentang tabel dari NIS (Kolom A) sampai Nilai (Kolom D)?",
+        image: "https://uploads.onecompiler.io/4537kx6u3/1789695331744/Screenshot%202026-09-18%20093139.png", // Contoh Link Gambar
+        options: [
+          { text: "Kolom ke-1", image: "" },
+          { text: "Kolom ke-2", image: "" },
+          { text: "Kolom ke-3", image: "" },
+          { text: "Kolom ke-4", image: "" }
+        ],
+        answer: 3
+      },
+      {
+        id: 13,
+        text: "Pada Gambar 1, jika kita ingin mengambil nilai dari siswa dengan NIS '1002' (Budi Santoso) menggunakan rumus VLOOKUP, penulisan rumus yang benar pada sel E2 adalah...",
+        image: "https://via.placeholder.com/600x200.png?text=Gambar+1+Tabel+VLOOKUP",
+        options: [
+          { text: '=VLOOKUP("1002"; A2:D5; 4; FALSE)', image: "" },
+          { text: '=VLOOKUP(1002; A2:D5; 2; FALSE)', image: "" },
+          { text: '=HLOOKUP(1002; A2:D5; 4; FALSE)', image: "" },
+          { text: '=VLOOKUP(A3; A2:D5; 3; TRUE)', image: "" }
+        ],
+        answer: 0
+      },
+      {
+        id: 14,
+        text: "Perhatikan tabel referensi horizontal pada Gambar 2! Fungsi HLOOKUP cocok digunakan apabila tabel acuan/referensi memiliki struktur berupa...",
+        image: "https://uploads.onecompiler.io/4537kx6u3/1789695324586/Screenshot%202026-09-18%20093201.png",
+        options: [
+          { text: "Data tersusun memanjang ke bawah (per kolom)", image: "" },
+          { text: "Data tersusun melebar ke samping (per baris)", image: "" },
+          { text: "Data berbentuk acak tanpa pola", image: "" },
+          { text: "Data berisi angka desimal saja", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 15,
+        text: "Berdasarkan Gambar 2, jika kita ingin mengambil informasi 'Bonus' untuk kode 'B', nilai dari row_index_num yang harus dimasukkan ke dalam rumus HLOOKUP adalah...",
+        image: "https://uploads.onecompiler.io/4537kx6u3/1789695324586/Screenshot%202026-09-18%20093201.png",
+        options: [
+          { text: "1", image: "" },
+          { text: "2", image: "" },
+          { text: "3", image: "" },
+          { text: "4", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 16,
+        text: "Perhatikan Gambar 4 yang memperlihatkan dua bentuk tabel referensi (Tabel A dan Tabel B). Pasangan fungsi lookup yang tepat untuk membaca Tabel A dan Tabel B secara berurutan adalah...",
+        image: "https://uploads.onecompiler.io/4537kx6u3/1789695285331/Screenshot%202026-09-18%20093227.png",
+        options: [
+          { text: "Tabel A menggunakan HLOOKUP, Tabel B menggunakan VLOOKUP", image: "" },
+          { text: "Tabel A menggunakan VLOOKUP, Tabel B menggunakan HLOOKUP", image: "" },
+          { text: "Tabel A dan Tabel B keduanya menggunakan VLOOKUP", image: "" },
+          { text: "Tabel A dan Tabel B keduanya menggunakan HLOOKUP", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 17,
+        text: "Dalam penulisan rumus =VLOOKUP(lookup_value, table_array, col_index_num, [range_lookup]), argumen [range_lookup] diisi dengan nilai FALSE atau 0. Hal ini bertujuan untuk...",
+        image: "",
+        options: [
+          { text: "Mencari nilai yang mendekati/paling mirip", image: "" },
+          { text: "Mencari nilai yang persis/sama persis secara akurat", image: "" },
+          { text: "Mengurutkan data dari A ke Z secara otomatis", image: "" },
+          { text: "Mengabaikan jika terjadi kesalahan rumus", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 18,
+        text: "Apabila rumus VLOOKUP atau HLOOKUP diolah tetapi data lookup_value yang dicari TIDAK ditemukan pada tabel acuan/referensi, pesan kesalahan (error) yang akan ditampilkan oleh Microsoft Excel adalah...",
+        image: "",
+        options: [
+          { text: "#VALUE!", image: "" },
+          { text: "#REF!", image: "" },
+          { text: "#N/A", image: "" },
+          { text: "#NAME?", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 19,
+        text: "Perhatikan potongan rumus berikut: =VLOOKUP(B2; $E$2:$G$10; 3; FALSE). Penggunaan tanda dollar ($) pada rentang $E$2:$G$10 berfungsi untuk...",
+        image: "",
+        options: [
+          { text: "Mengubah format angka menjadi mata uang Dolar", image: "" },
+          { text: "Mengunci sel/tabel referensi agar tidak bergeser saat rumus disalin (alamat absolut)", image: "" },
+          { text: "Menyembunyikan tabel acuan agar tidak terlihat", image: "" },
+          { text: "Mempercepat proses perhitungan rumus Excel", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 20,
+        text: "Rani memiliki tabel kehadiran murid selama satu bulan dengan jumlah data yang cukup banyak. Ia ingin mengetahui jumlah kehadiran Iko. Tindakan yang sebaiknya dilakukan Rani adalah...",
+        image: "",
+        options: [
+          { text: "Menggunakan fungsi pencarian data dengan nilai acuan yang sesuai", image: "" },
+          { text: "Mengurutkan data berdasarkan nama murid agar lebih mudah dibaca", image: "" },
+          { text: "Menyaring data berdasarkan kelas sebelum menghitung kehadiran murid", image: "" },
+          { text: "Memindahkan sebagian data ke lembar kerja baru agar tabel lebih ringkas", image: "" }
+        ],
+        answer: 0
+      },
+      {
+        id: 21,
+        text: "Guru memiliki data penjualan buku tulis selama satu bulan. Guru meminta Siska menampilkan data penjualan pada tanggal 1-7. Langkah yang sebaiknya dilakukan oleh Siska adalah...",
+        image: "",
+        options: [
+          { text: "Mengelompokkan data berdasarkan satuan waktu", image: "" },
+          { text: "Menambahkan kolom waktu, lalu mengurutkannya", image: "" },
+          { text: "Menyusun data berdasarkan urutan tanggal dari awal bulan", image: "" },
+          { text: "Membatasi tampilan data menggunakan kriteria tanggal tertentu", image: "" }
+        ],
+        answer: 3
+      },
+      {
+        id: 22,
+        text: "Perhatikan data peminjaman buku! Formula yang digunakan untuk mengetahui kategori buku yang dipinjam oleh Rani adalah...",
+        image: "https://uploads.onecompiler.io/4537kx6u3/1789695354338/WhatsApp%20Image%202026-09-10%20at%2008.34.04.jpeg",
+        options: [
+          { text: "=HLOOKUP(B3;A8:D10;1)", image: "" },
+          { text: "=HLOOKUP(B3;A8:D10;2)", image: "" },
+          { text: "=HLOOKUP(B3;A8:D10;3)", image: "" },
+          { text: "=HLOOKUP(B3;A8:C10;3)", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 23,
+        text: "Berikut alasan yang paling tepat menggunakan fungsi HLOOKUP adalah...",
+        image: "",
+        options: [
+          { text: "Data acuan berada pada baris pertama tabel referensi sehingga pencarian dilakukan secara mendatar", image: "" },
+          { text: "Data referensi disusun mendatar, tetapi nilai yang dicari berada pada kolom pertama tabel utama", image: "" },
+          { text: "Tabel referensi memiliki lebih dari satu baris informasi yang saling berkaitan", image: "" },
+          { text: "Menentukan informasi berdasarkan posisi kolom pada tabel referensi karena data utama sudah disusun", image: "" }
+        ],
+        answer: 0
+      },
+      {
+        id: 24,
+        text: "Terdapat sebuah tabel data murid disusun secara vertikal. Kolom pertama berisi NIS. Agar menampilkan nilai akhir berdasarkan NIS yang dimasukkan, tindakan paling tepat adalah...",
+        image: "",
+        options: [
+          { text: "Menelusuri NIS pada kolom pertama tabel, lalu mengambil nilai dari kolom yang sesuai dalam baris yang sama", image: "" },
+          { text: "Menentukan nilai akhir dengan menyesuaikan posisi kolom, meskipun NIS tidak berada pada kolom awal", image: "" },
+          { text: "Mencocokkan NIS pada baris teratas tabel agar data dapat dibaca secara berurutan", image: "" },
+          { text: "Mengambil nilai berdasarkan urutan baris tanpa memastikan kesamaan NIS yang dicari", image: "" }
+        ],
+        answer: 0
+      },
+      {
+        id: 25,
+        text: "Seorang murid sedang merapikan tabel rekap nilai proyek yang disusun secara vertikal. Kolom pertama berisi kode proyek. Agar proses analisis berjalan efisien, kegiatan yang sebaiknya dilakukan adalah...",
+        image: "",
+        options: [
+          { text: "Mengurutkan data berdasarkan status penilaian agar informasi lebih mudah dibaca", image: "" },
+          { text: "Menggabungkan seluruh informasi dalam satu kolom supaya pencarian lebih mudah dilakukan", image: "" },
+          { text: "Menentukan hasil analisis dengan mempertimbangkan urutan baris pada tabel", image: "" },
+          { text: "Menjadikan kode proyek sebagai nilai acuan pada kolom pertama sehingga data pendukung dapat ditelusuri", image: "" }
+        ],
+        answer: 3
+      },
+      {
+        id: 26,
+        text: "Sebuah tabel referensi berisi rentang jarak tempuh sepeda dipasangkan dengan kategori kebugaran. Data disusun dari terkecil ke terbesar. Rumus LOOKUP digunakan. Setelah disalin, beberapa kategori tidak sesuai. Pernyataan yang paling sesuai adalah...",
+        image: "",
+        options: [
+          { text: "Ketidaksesuaian muncul karena nilai jarak tempuh berada di batas antarrentang", image: "" },
+          { text: "Pergeseran alamat tabel referensi menyebabkan sistem membaca rentang data yang berbeda", image: "" },
+          { text: "Nilai jarak tempuh seharusnya dibuat unik agar hasil pencarian tidak berubah", image: "" },
+          { text: "Urutan data pada tabel utama memengaruhi hasil pencarian kategori", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 27,
+        text: "Terdapat lembar kerja berisi data unduhan internet. Tabel referensi berisi batas data MB dengan kategori kecepatan. Data tidak diurutkan. Ria menggunakan LOOKUP dengan range_lookup = TRUE. Muncul #N/A. Faktor utamanya adalah...",
+        image: "",
+        options: [
+          { text: "Nilai data unduhan berada di luar rentang yang tersedia", image: "" },
+          { text: "Tabel referensi tidak disusun dari nilai terkecil ke terbesar", image: "" },
+          { text: "Range_lookup seharusnya FALSE karena data unduhan bersifat unik", image: "" },
+          { text: "Alamat tabel referensi berubah karena tidak menggunakan referensi absolut", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 28,
+        text: "Tabel berisi nama buah dan stok. Urutan nama buah tidak teratur. Cara paling tepat untuk mencari stok 'Jeruk' adalah...",
+        image: "",
+        options: [
+          { text: "Menggunakan fungsi CHOOSE untuk memilih jumlah stok berdasarkan nama buah", image: "" },
+          { text: "Menggunakan fungsi LOOKUP karena seluruh data berada dalam satu tabel", image: "" },
+          { text: "Menentukan jumlah stok berdasarkan urutan data dalam tabel", image: "" },
+          { text: "Menentukan posisi data 'Jeruk' dengan fungsi MATCH, lalu mengambil jumlah stok melalui fungsi INDEX", image: "" }
+        ],
+        answer: 3
+      },
+      {
+        id: 29,
+        text: "Perbedaan yang tepat antara fungsi COUNTIFS dan SUMIFS adalah...",
+        image: "",
+        options: [
+          { text: "COUNTIFS: Menghasilkan banyaknya data sesuai kriteria. | SUMIFS: Menghasilkan total nilai angka dari data sesuai kriteria.", image: "" },
+          { text: "COUNTIFS: Memeriksa kesesuaian beberapa kriteria. | SUMIFS: Memeriksa kesesuaian sebelum menjumlahkan.", image: "" },
+          { text: "COUNTIFS: Menggunakan kriteria untuk dihitung. | SUMIFS: Menggunakan kriteria untuk dijumlahkan.", image: "" },
+          { text: "COUNTIFS: Menampilkan jumlah kemunculan. | SUMIFS: Menampilkan akumulasi nilai.", image: "" }
+        ],
+        answer: 0
+      },
+      {
+        id: 30,
+        text: "Terdapat tabel 120 baris 5 kolom. Rina ingin menemukan data kunjungan pada tanggal tertentu. Berdasarkan kondisi tersebut, Rina sebaiknya...",
+        image: "",
+        options: [
+          { text: "Memperbesar tampilan layar agar semua data terlihat jelas", image: "" },
+          { text: "Menyalin tabel ke lembar kerja baru", image: "" },
+          { text: "Memanfaatkan fungsi pencarian pada Microsoft Excel berdasarkan referensi sel yang sesuai", image: "" },
+          { text: "Mengurutkan seluruh data berdasarkan kolom tanggal agar pencarian lebih cepat", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 31,
+        text: "Dimas menggunakan rumus IF bertingkat yang sangat panjang. Dimas punya tabel rentang nilai dan kategori. Langkah yang sebaiknya dilakukan agar hasil konsisten adalah...",
+        image: "",
+        options: [
+          { text: "Menyusun kembali tabel nilai agar syarat rumus lebih mudah dibaca", image: "" },
+          { text: "Menggunakan fitur pengurutan data sebelum menerapkan rumus", image: "" },
+          { text: "Menggunakan fungsi LOOKUP untuk mengambil kategori nilai berdasarkan tabel acuan", image: "" },
+          { text: "Mengubah format angka pada tabel nilai agar rumus lebih stabil", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 32,
+        text: "Terdapat tabel mendatar berisi jenis minuman di baris pertama dan jumlah pembeli di baris kedua. Langkah paling tepat untuk menemukan jumlah pembeli satu jenis minuman adalah...",
+        image: "",
+        options: [
+          { text: "Memilih rumus yang menampilkan data sesuai urutan penyusunan tabel", image: "" },
+          { text: "Menerapkan rumus yang menelusuri nilai acuan pada baris pertama, lalu mengambil data dari baris referensi", image: "" },
+          { text: "Menggunakan rumus yang membaca data berdasarkan posisi kolom", image: "" },
+          { text: "Menggunakan rumus yang dapat menyesuaikan tampilan tabel", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 33,
+        text: "Kode barang disusun pada kolom pertama, sedangkan harga, merek, dan kategori berada pada kolom berikutnya. Fungsi yang digunakan untuk menampilkan kategori berdasarkan kode adalah...",
+        image: "",
+        options: [
+          { text: "Fungsi yang menelusuri nilai acuan pada kolom pertama, lalu mengambil data dari kolom lain dalam baris yang sama", image: "" },
+          { text: "Fungsi yang memeriksa data berdasarkan susunan secara mendatar", image: "" },
+          { text: "Fungsi yang memilih data berdasarkan posisi kolom", image: "" },
+          { text: "Fungsi yang membaca data berdasarkan urutan baris", image: "" }
+        ],
+        answer: 0
+      },
+      {
+        id: 34,
+        text: "Penggunaan fungsi INDEX/MATCH (REFERENCE) yang benar untuk mengambil isi data dan posisi indeks ditunjukkan oleh angka...",
+        image: "",
+        options: [
+          { text: "1), 2), dan 3)", image: "" },
+          { text: "1), 2), dan 4)", image: "" },
+          { text: "1), 3), dan 4)", image: "" },
+          { text: "2), 3), dan 4)", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 35,
+        text: "Nara harus mengambil nilai rahasia di baris ke-4 dan kolom ke-3. Rumus Excel yang tepat adalah...",
+        image: "",
+        options: [
+          { text: "=INDEX(array; row_num; [column_num])", image: "" },
+          { text: "=MATCH(lookup_value; lookup_array; match_type)", image: "" },
+          { text: "=REFERENCE(index_num; value1; value2; ...)", image: "" },
+          { text: "=LOOKUP(lookup_value; lookup_vector; result_vector)", image: "" }
+        ],
+        answer: 0
+      },
+      {
+        id: 36,
+        text: "Dalam 'Wheel of Options', komputer diminta menampilkan hadiah nomor 3 menggunakan fungsi CHOOSE. Rumus yang paling tepat adalah...",
+        image: "",
+        options: [
+          { text: "=CHOOSE(hadiah3; 1; 2; 3; 4)", image: "" },
+          { text: "=CHOOSE(1; hadiah3; hadiah2; hadiah1; hadiah4)", image: "" },
+          { text: "=CHOOSE(3; hadiah1; hadiah2; hadiah3; hadiah4)", image: "" },
+          { text: "=CHOOSE(5; hadiah1; hadiah2; hadiah3; hadiah4)", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 37,
+        text: "Metode pengolahan sekumpulan data menjadi bentuk yang lebih singkat, jelas, dan mudah dipahami disebut...",
+        image: "",
+        options: [
+          { text: "Penyajian data", image: "" },
+          { text: "Penataan data", image: "" },
+          { text: "Peringkasan data", image: "" },
+          { text: "Pengelompokan data", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 38,
+        text: "Andi ingin mengetahui harga satuan berdasarkan kode barang. Rumus =VLOOKUP(E5;J12:M13;2;FALSE) menghasilkan nilai tidak sesuai. Kesalahan terletak pada...",
+        image: "",
+        options: [
+          { text: "Penulisan tanda baca dalam formula Microsoft Excel", image: "" },
+          { text: "Pemilihan rentang sel sebagai acuan pencarian data", image: "" },
+          { text: "Penggunaan tipe pencarian pada argumen terakhir", image: "" },
+          { text: "Penggunaan fungsi yang tidak sesuai", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 39,
+        text: "Budi membagi tugas panitia pameran seni menjadi Seksi Acara, Perlengkapan, Konsumsi, dan Dokumentasi. Tindakan memecah tugas besar menjadi bagian kecil merupakan pilar...",
+        image: "",
+        options: [
+          { text: "Abstraksi", image: "" },
+          { text: "Dekomposisi", image: "" },
+          { text: "Pengenalan Pola", image: "" },
+          { text: "Algoritma", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 40,
+        text: "Proses mengurai masalah aplikasi crash secara sistematis (periksa koneksi, update, memori) merupakan contoh dekomposisi karena...",
+        image: "",
+        options: [
+          { text: "Mengabaikan detail yang tidak penting", image: "" },
+          { text: "Menyusun urutan langkah perbaikan", image: "" },
+          { text: "Memecah masalah kompleks menjadi komponen penyebab terpisah", image: "" },
+          { text: "Mencari kesamaan masalah sebelumnya", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 41,
+        text: "Mengapa membagi pengembangan game menjadi desain, alur cerita, pemrograman, dan musik sangat penting dalam berpikir komputasional?",
+        image: "",
+        options: [
+          { text: "Agar solusi dapat diterapkan pada semua game", image: "" },
+          { text: "Agar pengerjaan terfokus dan selesai secara paralel oleh ahli di bidangnya", image: "" },
+          { text: "Agar tidak perlu mencatat langkah detail", image: "" },
+          { text: "Agar dapat menghilangkan fitur game yang sulit", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 42,
+        text: "Dokter menyimpulkan pasien terkena virus flu tipe baru berdasarkan kesamaan gejala yang timbul. Penerapan berpikir komputasional yang dilakukan adalah...",
+        image: "",
+        options: [
+          { text: "Dekomposisi", image: "" },
+          { text: "Algoritma", image: "" },
+          { text: "Pengenalan Pola", image: "" },
+          { text: "Abstraksi", image: "" }
+        ],
+        answer: 2
+      },
+      {
+        id: 43,
+        text: "Perhatikan deret angka: 3, 6, 12, 24, X. Nilai X dan pola yang digunakan adalah...",
+        image: "",
+        options: [
+          { text: "48, yaitu mengalikan angka sebelumnya dengan 2", image: "" },
+          { text: "36, yaitu menambahkan angka sebelumnya dengan 12", image: "" },
+          { text: "48, yaitu menambahkan angka sebelumnya dengan angka itu sendiri", image: "" },
+          { text: "A dan C benar", image: "" }
+        ],
+        answer: 3
+      },
+      {
+        id: 44,
+        text: "Warga memindahkan barang berharga setiap kali hujan deras turun lebih dari 1 jam berdasarkan pengalaman masa lalu. Hal ini merupakan contoh...",
+        image: "",
+        options: [
+          { text: "Warga mengabaikan data curah hujan", image: "" },
+          { text: "Warga menemukan keteraturan dari kejadian berulang di masa lalu untuk memprediksi peristiwa mendatang", image: "" },
+          { text: "Warga menyusun daftar langkah evakuasi", image: "" },
+          { text: "Warga membagi wilayah desa menjadi beberapa zona", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 45,
+        text: "Aplikasi peta digital menampilkan jalur dan waktu, tetapi mengabaikan posisi pohon dan cat rumah. Proses menyaring informasi ini disebut...",
+        image: "",
+        options: [
+          { text: "Dekomposisi", image: "" },
+          { text: "Abstraksi", image: "" },
+          { text: "Pengenalan Pola", image: "" },
+          { text: "Algoritma", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 46,
+        text: "Sistem data buku perpustakaan hanya mencatat Judul, Penulis, Penerbit, dan ISBN tanpa mencatat fisik halaman. Alasan abstraksi pada kasus ini adalah...",
+        image: "",
+        options: [
+          { text: "Menyimpan semua informasi membuat sistem berjalan lebih cepat", image: "" },
+          { text: "Memfokuskan data pada informasi relevan dan mengabaikan detail yang tidak penting", image: "" },
+          { text: "Memecah data buku menjadi beberapa kategori", image: "" },
+          { text: "Mengurutkan buku berdasarkan tanggal pembelian", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 47,
+        text: "Jadwal harian siswa (Sekolah, Istirahat, Belajar) merupakan bentuk abstraksi karena...",
+        image: "",
+        options: [
+          { text: "Menggambarkan detail setiap menit aktivitas", image: "" },
+          { text: "Menyederhanakan rutinitas harian menjadi poin-poin utama waktu dan kegiatan kunci", image: "" },
+          { text: "Mengurutkan tugas sekolah dari sulit ke mudah", image: "" },
+          { text: "Mencari kesamaan antara jadwal sekolah dan rumah", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 48,
+        text: "Urutan pembuatan kue bolu harus dilakukan secara tepat agar tidak bantat. Hal ini menunjukkan algoritma harus bersifat...",
+        image: "",
+        options: [
+          { text: "Acak dan fleksibel", image: "" },
+          { text: "Logis, terurut, dan sistematis", image: "" },
+          { text: "Ringkas tanpa urutan", image: "" },
+          { text: "Mengabaikan langkah-langkah detail", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 49,
+        text: "Algoritma mengecek bilangan Genap/Ganjil menggunakan sisa hasil bagi (mod 2). Pernyataan yang tepat tentang algoritma tersebut adalah...",
+        image: "",
+        options: [
+          { text: "Algoritma memiliki kesalahan pada langkah ke-2", image: "" },
+          { text: "Algoritma tersebut menggunakan struktur percabangan/kondisi yang logis", image: "" },
+          { text: "Langkah ke-3 merupakan bentuk dekomposisi", image: "" },
+          { text: "Hasil cetak selalu berupa 'Bilangan Genap'", image: "" }
+        ],
+        answer: 1
+      },
+      {
+        id: 50,
+        text: "Pendekatan urutan langkah terstruktur dalam menyusun buku dari abjad A ke Z di rak perpustakaan merupakan penerapan pilar...",
+        image: "",
+        options: [
+          { text: "Abstraksi", image: "" },
+          { text: "Algoritma", image: "" },
+          { text: "Pengenalan Pola", image: "" },
+          { text: "Dekomposisi", image: "" }
+        ],
+        answer: 1
+      }
+    ];
+
+    // State Variables
+    let currentQuestionIndex = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let studentData = { nama: "", kelas: "" };
+    let foulCount = 0;
+    let timerInterval = null;
+    let totalSeconds = 90 * 60; // Timer 90 menit
+
+    // DOM Elements
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const loginForm = document.getElementById('login-form');
+    
+    const displayUser = document.getElementById('display-user');
+    const timerDisplay = document.getElementById('timer');
+    const foulDisplay = document.getElementById('foul-count');
+    
+    const questionText = document.getElementById('question-text');
+    const questionImage = document.getElementById('question-image');
+    const optionsContainer = document.getElementById('options-container');
+    
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    const cardOverlay = document.getElementById('card-overlay');
+    const cardGraphic = document.getElementById('card-graphic');
+    const cardTitle = document.getElementById('card-title');
+    const cardMsg = document.getElementById('card-msg');
+    const btnCardAck = document.getElementById('btn-card-ack');
+
+    // 1. Submit Form Start / Login Passcode
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inputPasscode = document.getElementById('passcode').value;
+      
+      if (inputPasscode !== SECRET_PASSCODE) {
+        alert("Passcode salah! Silakan tanyakan passcode pada guru pengawas.");
+        return;
+      }
+
+      studentData.nama = document.getElementById('student-name').value;
+      studentData.kelas = document.getElementById('student-class').value;
+
+      displayUser.innerText = `${studentData.nama} (${studentData.kelas})`;
+
+      startScreen.classList.remove('active');
+      quizScreen.classList.add('active');
+
+      startTimer();
+      loadQuestion();
+      setupCheatingDetection();
+    });
+
+    // 2. Timer System (90 Menit)
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        totalSeconds--;
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = totalSeconds % 60;
+        timerDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        if (totalSeconds <= 0) {
+          clearInterval(timerInterval);
+          alert("Waktu pengerjaan telah habis!");
+          finishQuiz();
+        }
+      }, 1000);
+    }
+
+    // 3. Load Soal & Jawaban
+    function loadQuestion() {
+      const q = questions[currentQuestionIndex];
+      questionText.innerText = `${currentQuestionIndex + 1}. ${q.text}`;
+
+      // Set Gambar Soal jika ada
+      if (q.image && q.image.trim() !== "") {
+        questionImage.src = q.image;
+        questionImage.style.display = "block";
+      } else {
+        questionImage.style.display = "none";
+      }
+
+      optionsContainer.innerHTML = "";
+      const labels = ["A", "B", "C", "D"];
+
+      q.options.forEach((opt, idx) => {
+        const optBtn = document.createElement('div');
+        optBtn.className = `option-btn ${userAnswers[currentQuestionIndex] === idx ? 'selected' : ''}`;
+        optBtn.onclick = () => selectOption(idx);
+
+        let optHtml = `<div class="opt-label">${labels[idx]}</div><div>${opt.text}</div>`;
+        if (opt.image && opt.image.trim() !== "") {
+          optHtml += `<img src="${opt.image}" class="opt-img" alt="Pilihan ${labels[idx]}">`;
+        }
+
+        optBtn.innerHTML = optHtml;
+        optionsContainer.appendChild(optBtn);
+      });
+
+      // Update Navigasi
+      btnPrev.disabled = currentQuestionIndex === 0;
+      if (currentQuestionIndex === questions.length - 1) {
+        btnNext.style.display = 'none';
+        btnSubmit.style.display = 'block';
+      } else {
+        btnNext.style.display = 'block';
+        btnSubmit.style.display = 'none';
+      }
+    }
+
+    function selectOption(index) {
+      userAnswers[currentQuestionIndex] = index;
+      loadQuestion();
+    }
+
+    // Tombol Navigasi
+    btnPrev.addEventListener('click', () => {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+      }
+    });
+
+    btnNext.addEventListener('click', () => {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+      }
+    });
+
+    btnSubmit.addEventListener('click', () => {
+      if (confirm("Apakah Anda yakin ingin menyelesaikan ujian?")) {
+        finishQuiz();
+      }
+    });
+
+    // 4. Sistem Pengawasan & Deteksi Kecurangan
+    function setupCheatingDetection() {
+      window.addEventListener('blur', recordFoul);
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) recordFoul();
+      });
+    }
+
+    function recordFoul() {
+      if (!quizScreen.classList.contains('active')) return;
+      foulCount++;
+      foulDisplay.innerText = foulCount;
+
+      if (foulCount === 1) {
+        // Kartu Kuning
+        cardGraphic.className = "card-graphic yellow-card";
+        cardTitle.innerText = "KARTU KUNING!";
+        cardMsg.innerText = "Anda terdeteksi meninggalkan halaman ujian (membuka tab/aplikasi lain). Harap fokus pada soal ujian!";
+        cardOverlay.style.display = "flex";
+      } else if (foulCount >= 2) {
+        // Kartu Merah
+        cardGraphic.className = "card-graphic red-card";
+        cardTitle.innerText = "KARTU MERAH!";
+        cardMsg.innerText = "Anda telah melakukan 2 kali pelanggaran kecurangan. Pengerjaan Anda dibatalkan dan akan diulang dari layar awal.";
+        cardOverlay.style.display = "flex";
+      }
+    }
+
+    btnCardAck.addEventListener('click', () => {
+      cardOverlay.style.display = "none";
+      if (foulCount >= 2) {
+        location.reload(); // Mengulang kembali ke layar awal
+      }
+    });
+
+    // 5. Kalkulasi Skor & Kirim Data ke GAS
+    function finishQuiz() {
+      clearInterval(timerInterval);
+      window.removeEventListener('blur', recordFoul);
+
+      let correctCount = 0;
+      let wrongCount = 0;
+      let wrongQuestions = [];
+
+      questions.forEach((q, index) => {
+        if (userAnswers[index] === q.answer) {
+          correctCount++;
+        } else {
+          wrongCount++;
+          wrongQuestions.push(index + 1);
+        }
+      });
+
+      let finalScore = Math.round((correctCount / questions.length) * 100);
+
+      // Render Hasil Ke Layar
+      document.getElementById('final-score').innerText = finalScore;
+      document.getElementById('correct-count').innerText = correctCount;
+      document.getElementById('wrong-count').innerText = wrongCount;
+      document.getElementById('final-fouls').innerText = foulCount;
+
+      const wrongListDiv = document.getElementById('wrong-list');
+      if (wrongQuestions.length > 0) {
+        wrongListDiv.innerHTML = wrongQuestions.map(n => `<span class="error-tag">Soal ${n}</span>`).join(' ');
+      } else {
+        wrongListDiv.innerText = "Sempurna! Tidak ada jawaban yang salah.";
+      }
+
+      quizScreen.classList.remove('active');
+      resultScreen.classList.add('active');
+
+      // Data yang dikirim ke Apps Script
+      const payload = {
+        timestamp: new Date().toLocaleString('id-ID'),
+        nama: studentData.nama,
+        kelas: studentData.kelas,
+        salah: wrongCount,
+        benar: correctCount,
+        skor: finalScore,
+        pelanggaran: foulCount,
+        soalSalah: wrongQuestions.join(', ')
+      };
+
+      // Kirim via POST Fetch ke GAS
+      if (GAS_URL && !GAS_URL.includes("XXXXXXXXXX")) {
+        fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(err => console.error("Gagal mengirim data skor: ", err));
+      }
+    }
+  </script>
+</body>
+</html>
